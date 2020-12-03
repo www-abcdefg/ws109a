@@ -1,36 +1,29 @@
-// 安裝套件： npm install URIjs
-// 執行方法： node code2 http://news.baidu.com/
 var fs = require('fs');
 var http = require('http');
+const { title } = require('process');
 var URI = require('URIjs');
 var c = console;
 
 var urlMap  = { };
-var urlList = [ ];//
+var urlList = [ ];
 var urlIdx  = 0;
 
 urlList.push(process.argv[2]); // 新增第一個網址
 
 crawNext(); // 開始抓
 
-async function crawNext() { // 下載下一個網頁
-  const delay = (s) => {
-    return new Promise(function(resolve){  // 回傳一個 promise
-      setTimeout(resolve,s);               // 等待多少秒之後 resolve()
-    });
-  };
+function crawNext() { // 下載下一個網頁
   if (urlIdx >= urlList.length) 
     return;
-  var url =urlList[urlIdx];
+  var url = urlList[urlIdx];
   if (url.indexOf('http://')!==0) {
     urlIdx ++;
     crawNext();
     return;
   }
   c.log('url[%d]=%s', urlIdx, url);
-  await delay(3000);
   urlMap[url] = { downlioad:false };
-  pageDownload(url, async function (data) {
+  pageDownload(url, function (data) {
     var page = data.toString();
     urlMap[url].download = true;
     var filename = urlToFileName(url);
@@ -39,9 +32,8 @@ async function crawNext() { // 下載下一個網頁
     var refs = getMatches(page, /\shref\s*=\s*["'#]([^"'#]*)[#"']/gi, 1);
     for (i in refs) {
       try {
-      var refUri =URI(refs[i]).absoluteTo(url).toString();
+      var refUri = URI(refs[i]).absoluteTo(url).toString();
       c.log('ref=%s', refUri);
-      await delay(3000);     
       if (refUri !== undefined && urlMap[refUri] === undefined)
         urlList.push(refUri);
       } catch (e) {}
