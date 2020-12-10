@@ -1,74 +1,71 @@
-// 安裝套件： npm install URIjs
-// 執行方法： node code2 http://news.baidu.com/
-var fs = require('fs');
-var http = require('http');
-var URI = require('URIjs');
-var c = console;
+import { get, post } from './esearch.js'
+const encoder = new TextEncoder();
+const code2 = encoder.encode("");
+var urlList = [
+  // 'http://msn.com', 
+  'https://en.wikipedia.org/wiki/Main_Page'
+]
 
-var urlMap  = { };
-var urlList = [ ];//
-var urlIdx  = 0;
+var urlMap = {}
 
-urlList.push(process.argv[2]); // 新增第一個網址
-
-crawNext(); // 開始抓
-
-async function crawNext() { // 下載下一個網頁
-  const delay = (s) => {
-    return new Promise(function(resolve){  // 回傳一個 promise
-      setTimeout(resolve,s);               // 等待多少秒之後 resolve()
-    });
-  };
-  if (urlIdx >= urlList.length) 
-    return;
-  var url =urlList[urlIdx];
-  if (url.indexOf('http://')!==0) {
-    urlIdx ++;
-    crawNext();
-    return;
+async function getPage(url) {
+  try {
+    const res = await fetch(url);
+    return await res.text();  
+  } catch (error) {
+    console.log('getPage:', url, 'fail!')
   }
-  c.log('url[%d]=%s', urlIdx, url);
-  await delay(3000);
-  urlMap[url] = { downlioad:false };
-  pageDownload(url, async function (data) {
-    var page = data.toString();
-    urlMap[url].download = true;
-    var filename = urlToFileName(url);
-    fs.writeFile('data/'+filename, page, function(err) {
-    });
-    var refs = getMatches(page, /\shref\s*=\s*["'#]([^"'#]*)[#"']/gi, 1);
-    for (i in refs) {
-      try {
-      var refUri =URI(refs[i]).absoluteTo(url).toString();
-      c.log('ref=%s', refUri);
-      await delay(3000);     
-      if (refUri !== undefined && urlMap[refUri] === undefined)
-        urlList.push(refUri);
-      } catch (e) {}
+}
+
+function html2urls(html) {
+  var r = /\shref\s*=\s*['"](.*?)['"]/g
+  var urls = []
+  while (true) {
+    let m = r.exec(html)
+    if (m == null) break
+    urls.push(m[1])
+  }
+  return urls
+}
+
+// await post(`/web/page/${i}`, {url, page})
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function craw(urlList, urlMap) {
+  var count = 0
+  for (let i=0; i<urlList.length; i++) {
+  // for (let i=0; i<10; i++) {
+    var url = urlList[i]
+    console.log('url=', url)
+    await sleep(2000);//delay
+    if (!url.startsWith("https://en.wikipedia.org/wiki")) continue;
+    console.log(url, 'download')
+    count ++
+    if (count >=10) break
+    try {
+      var page = await getPage(url)
+      await post(`/web9/page/${count}`, {url, page})
+      // await Deno.writeTextFile(`data/${i}.txt`, page)
+      var urls = html2urls(page)
+      // console.log('urls=', urls)
+      for (let surl of urls) {
+        var purl = surl.split(/[#\?]/)[0]
+        var absurl = purl
+        if (surl.indexOf("//")<0) { // 是相對路徑
+           absurl = (new URL(purl, url)).href
+           // console.log('absurl=', absurl)
+        }
+        if (urlMap[absurl] == null) {
+          urlList.push(absurl)
+          urlMap[absurl] = 0
+        }
+      }
+    } catch (error) {
+      console.log('error=', error)
     }
-    urlIdx ++;
-    crawNext();
-  });
+  }
 }
-// 下載一個網頁
-function pageDownload(url, callback) {
-  http.get(url, function(res) {
-    res.on('data', callback);
-  }).on('error', function(e) {
-    console.log("Got error: " + e.message);
-  });
-}
-// 取得正規表達式比對到的結果成為一個陣列
-function getMatches(string, regex, index) {
-    index || (index = 1); // default to the first capturing group
-    var matches = [];
-    var match;
-    while (match = regex.exec(string)) {
-        matches.push(match[index]);
-    }
-    return matches;
-}
-// 將網址改寫為合法的檔案名稱
-function urlToFileName(url) {
-  return url.replace(/[^\w]/gi, '_');
-}
+
+await craw(urlList, urlMap)
+await Deno.writeFile("code2.json", JSON.stringify(url));

@@ -1,3 +1,6 @@
+// 安裝套件： npm install URIjs
+// 執行方法： node crawler http://tw.msn.com/
+//模組
 var fs = require('fs');
 var http = require('http');
 const { title } = require('process');
