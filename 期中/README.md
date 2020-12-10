@@ -9,6 +9,8 @@
 * 資安威脅
 ## 作業:code
 * [code](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code.js)
+        
+        
         const request = require("request");
         const cheerio = require("cheerio");
 
@@ -43,8 +45,8 @@
         setInterval(pttCrawler,  24* 60 * 60 * 1000);
 ## 作業:code1
 * [code1](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code1.js)
-        // 安裝套件： npm install URIjs
-        // 執行方法： node code2 http://news.baidu.com/
+
+
         var fs = require('fs');
         var http = require('http');
         var URI = require('URIjs');
@@ -112,6 +114,8 @@
         }
 ## 作業:code2
 * [code2](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code2.js)
+        
+        
         import { get, post } from './esearch.js'
         var urlList = [
         // 'http://msn.com', 
