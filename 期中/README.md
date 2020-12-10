@@ -8,7 +8,7 @@
 * 盜文採集、垃圾流量網站
 * 資安威脅
 ## 作業:code
-* [code]](https://gitlab.com/ccc109/ws/-/tree/master/deno/14-elasticsearch)
+* [code](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code.js)
         const request = require("request");
         const cheerio = require("cheerio");
 
@@ -42,7 +42,7 @@
         // 一天爬一次資料
         setInterval(pttCrawler,  24* 60 * 60 * 1000);
 ## 作業:code1
-* [code1](https://gitlab.com/ccc109/ws/-/tree/master/deno/14-elasticsearch)
+* [code1](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code1.js)
         // 安裝套件： npm install URIjs
         // 執行方法： node code2 http://news.baidu.com/
         var fs = require('fs');
@@ -111,7 +111,7 @@
         return url.replace(/[^\w]/gi, '_');
         }
 ## 作業:code2
-* [code2](https://gitlab.com/ccc109/ws/-/tree/master/deno/14-elasticsearch)
+* [code2](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code2.js)
         import { get, post } from './esearch.js'
         var urlList = [
         // 'http://msn.com', 
