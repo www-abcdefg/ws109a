@@ -10,179 +10,184 @@
 ## 作業:code
 * [code](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code.js)
 ...
-        const request = require("request");
-        const cheerio = require("cheerio");
+const request = require("request");
+const cheerio = require("cheerio");
 
-        const pttCrawler = () => {
-            request({
-                url: "https://www.ptt.cc/bbs/Stock/index.html",
-                method: "GET"
-            }, (error, res, body) => {
-                // 如果有錯誤訊息，或沒有 body(內容)，就 return
-                if (error || !body) {
-                    return;
-                }
+const pttCrawler = () => {
+    request({
+        url: "https://www.ptt.cc/bbs/Stock/index.html",
+        method: "GET"
+    }, (error, res, body) => {
+        // 如果有錯誤訊息，或沒有 body(內容)，就 return
+        if (error || !body) {
+            return;
+        }
 
-                const data = [];// 建立一個儲存結果的容器
-                const $ = cheerio.load(body); // 載入 body
-                const list = $(".r-list-container .r-ent");
-                for (let i = 0; i < list.length; i++) {
-                    const title = list.eq(i).find('.title a').text();//公告
-                    const author = list.eq(i).find('.meta .author').text();//作者
-                    const date = list.eq(i).find('.meta .date').text();//日期
-                    const link = list.eq(i).find('.title a').attr('href');//網址
+        const data = [];// 建立一個儲存結果的容器
+        const $ = cheerio.load(body); // 載入 body
+        const datax = $(".r-list-container .r-ent");
+        for (let i = 0; i < datax.length; i++) {
+            const title = datax.eq(i).find('.title a').text();//公告
+            const author = datax.eq(i).find('.meta .author').text();//作者
+            const date = datax.eq(i).find('.meta .date').text();//日期
+            const link =datax .eq(i).find('.title a').attr('href');//網址
 
-                    data.push(( title),(author),(date),(link));
-                    //data.push({title,author,date,link});//有標題的ex  title: '[公告] Stock 股票板板規 V3   (2020/11/20 編修)'
-                }
+            data.push(( title),(author),(date),(link));
+            //data.push({title,author,date,link});//有標題的ex  title: '[公告] Stock 股票板板規 V3   (2020/11/20 編修)'
+        }
 
-                console.log(data);
-            });
-        };
-        pttCrawler();
-        // 一天爬一次資料
-        setInterval(pttCrawler,  24* 60 * 60 * 1000);
+        console.log(data);
+    });
+};
+pttCrawler();
+// 一天爬一次資料
+setInterval(pttCrawler,  24* 60 * 60 * 1000);
 ...
 ## 作業:code1
 * [code1](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code1.js)
 ...
-        var fs = require('fs');
-        var http = require('http');
-        var URI = require('URIjs');
-        var c = console;
+// 安裝套件： npm install URIjs
+// 執行方法： node crawler http://tw.msn.com/
+//模組
+var fs = require('fs');
+var http = require('http');
+const { title } = require('process');
+var URI = require('URIjs');
+var c = console;
 
-        var urlMap  = { };
-        var urlList = [ ];
-        var urlIdx  = 0;
+var urlMap  = { };
+var urlList = [ ];
+var urlIdx  = 0;
 
-        urlList.push(process.argv[2]); // 新增第一個網址
+urlList.push(process.argv[2]); // 新增第一個網址
 
-        crawNext(); // 開始抓
+crawNext(); // 開始抓
 
-        function crawNext() { // 下載下一個網頁
-        if (urlIdx >= urlList.length) 
-            return;
-        var url = urlList[urlIdx];
-        if (url.indexOf('http://')!==0) {
-            urlIdx ++;
-            crawNext();
-            return;
-        }
-        c.log('url[%d]=%s', urlIdx, url);
-        urlMap[url] = { downlioad:false };
-        pageDownload(url, function (data) {
-            var page = data.toString();
-            urlMap[url].download = true;
-            var filename = urlToFileName(url);
-            fs.writeFile('data/'+filename, page, function(err) {
-            });
-            var refs = getMatches(page, /\shref\s*=\s*["'#]([^"'#]*)[#"']/gi, 1);
-            for (i in refs) {
-            try {
-            var refUri = URI(refs[i]).absoluteTo(url).toString();
-            c.log('ref=%s', refUri);
-            if (refUri !== undefined && urlMap[refUri] === undefined)
-                urlList.push(refUri);
-            } catch (e) {}
-            }
-            urlIdx ++;
-            crawNext();
-        });
-        }
-        // 下載一個網頁
-        function pageDownload(url, callback) {
-        http.get(url, function(res) {
-            res.on('data', callback);
-        }).on('error', function(e) {
-            console.log("Got error: " + e.message);
-        });
-        }
-        // 取得正規表達式比對到的結果成為一個陣列
-        function getMatches(string, regex, index) {
-            index || (index = 1); // default to the first capturing group
-            var matches = [];
-            var match;
-            while (match = regex.exec(string)) {
-                matches.push(match[index]);
-            }
-            return matches;
-        }
-        // 將網址改寫為合法的檔案名稱
-        function urlToFileName(url) {
-        return url.replace(/[^\w]/gi, '_');
-        }
-... 
+function crawNext() { // 下載下一個網頁
+  if (urlIdx >= urlList.length) 
+    return;
+  var url = urlList[urlIdx];
+  if (url.indexOf('http://')!==0) {
+    urlIdx ++;
+    crawNext();
+    return;
+  }
+  c.log('url[%d]=%s', urlIdx, url);
+  urlMap[url] = { downlioad:false };
+  pageDownload(url, function (data) {
+    var page = data.toString();
+    urlMap[url].download = true;
+    var filename = urlToFileName(url);
+    fs.writeFile('data/'+filename, page, function(err) {
+    });
+    var refs = getMatches(page, /\shref\s*=\s*["'#]([^"'#]*)[#"']/gi, 1);
+    for (i in refs) {
+      try {
+      var refUri = URI(refs[i]).absoluteTo(url).toString();
+      c.log('ref=%s', refUri);
+      if (refUri !== undefined && urlMap[refUri] === undefined)
+        urlList.push(refUri);
+      } catch (e) {}
+    }
+    urlIdx ++;
+    crawNext();
+  });
+}
+// 下載一個網頁
+function pageDownload(url, callback) {
+  http.get(url, function(res) {
+    res.on('data', callback);
+  }).on('error', function(e) {
+    console.log("Got error: " + e.message);
+  });
+}
+// 取得正規表達式比對到的結果成為一個陣列
+function getMatches(string, regex, index) {
+    index || (index = 1); // default to the first capturing group
+    var matches = [];
+    var match;
+    while (match = regex.exec(string)) {
+        matches.push(match[index]);
+    }
+    return matches;
+}
+// 將網址改寫為合法的檔案名稱
+function urlToFileName(url) {
+  return url.replace(/[^\w]/gi, '_');
+}
+...
 ## 作業:code2
 * [code2](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code2.js)
 ...
-        import { get, post } from './esearch.js'
-        var urlList = [
-        // 'http://msn.com', 
-        'https://en.wikipedia.org/wiki/Main_Page'
-        ]
+import { get, post } from './esearch.js'
 
-        var urlMap = {}
+var urlList = [
+  // 'http://msn.com', 
+  'https://en.wikipedia.org/wiki/Main_Page'
+]
 
-        async function getPage(url) {
-        try {
-            const res = await fetch(url);
-            return await res.text();  
-        } catch (error) {
-            console.log('getPage:', url, 'fail!')
-        }
-        }
+var urlMap = {}
 
-        function html2urls(html) {
-        var r = /\shref\s*=\s*['"](.*?)['"]/g
-        var urls = []
-        while (true) {
-            let m = r.exec(html)
-            if (m == null) break
-            urls.push(m[1])
-        }
-        return urls
-        }
+async function getPage(url) {
+  try {
+    const res = await fetch(url);
+    return await res.text();  
+  } catch (error) {
+    console.log('getPage:', url, 'fail!')
+  }
+}
 
-        // await post(`/web/page/${i}`, {url, page})
-        function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        async function craw(urlList, urlMap) {
-        var count = 0
-        for (let i=0; i<urlList.length; i++) {
-        // for (let i=0; i<10; i++) {
-            var url = urlList[i]
-            console.log('url=', url)
-            await sleep(2000);//delay
-            if (!url.startsWith("https://en.wikipedia.org/wiki")) continue;
-            console.log(url, 'download')
-            count ++
-            if (count >=10) break
-            try {
-            var page = await getPage(url)
-            await post(`/web9/page/${count}`, {url, page})
-            // await Deno.writeTextFile(`data/${i}.txt`, page)
-            var urls = html2urls(page)
-            // console.log('urls=', urls)
-            for (let surl of urls) {
-                var purl = surl.split(/[#\?]/)[0]
-                var absurl = purl
-                if (surl.indexOf("//")<0) { // 是相對路徑
-                absurl = (new URL(purl, url)).href
-                // console.log('absurl=', absurl)
-                }
-                if (urlMap[absurl] == null) {
-                urlList.push(absurl)
-                urlMap[absurl] = 0
-                }
-            }
-            } catch (error) {
-            console.log('error=', error)
-            }
-        }
-        }
+function html2urls(html) {
+  var r = /\shref\s*=\s*['"](.*?)['"]/g
+  var urls = []
+  while (true) {
+    let m = r.exec(html)
+    if (m == null) break
+    urls.push(m[1])
+  }
+  return urls
+}
 
-        await craw(urlList, urlMap)
+// await post(`/web/page/${i}`, {url, page})
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function craw(urlList, urlMap) {
+  var count = 0
+  for (let i=0; i<urlList.length; i++) {
+  // for (let i=0; i<10; i++) {
+    var url = urlList[i]
+    console.log('url=', url)
+    await sleep(2000);//delay
+    if (!url.startsWith("https://en.wikipedia.org/wiki")) continue;
+    console.log(url, 'download')
+    count ++
+    if (count >=10) break
+    try {
+      var page = await getPage(url)
+      await post(`/web9/page/${count}`, {url, page})
+      // await Deno.writeTextFile(`data/${i}.txt`, page)
+      var urls = html2urls(page)
+      // console.log('urls=', urls)
+      for (let surl of urls) {
+        var purl = surl.split(/[#\?]/)[0]
+        var absurl = purl
+        if (surl.indexOf("//")<0) { // 是相對路徑
+           absurl = (new URL(purl, url)).href
+           // console.log('absurl=', absurl)
+        }
+        if (urlMap[absurl] == null) {
+          urlList.push(absurl)
+          urlMap[absurl] = 0
+        }
+      }
+    } catch (error) {
+      console.log('error=', error)
+    }
+  }
+}
+
+await craw(urlList, urlMap)
 ...
 ## 描述與步驟
 * code
