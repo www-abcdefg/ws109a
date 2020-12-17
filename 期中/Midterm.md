@@ -120,7 +120,8 @@ function urlToFileName(url) {
 * [code2](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/code2.js)
 ```
 import { get, post } from './esearch.js'
-
+//import { writeJson } from 'https://deno.land/std/fs/mod.ts'
+import { writeJson, writeJsonSync } from 'https://deno.land/x/jsonfile/mod.ts';
 var urlList = [
   // 'http://msn.com', 
   'https://en.wikipedia.org/wiki/Main_Page'
@@ -184,6 +185,8 @@ async function craw(urlList, urlMap) {
     } catch (error) {
       console.log('error=', error)
     }
+
+    writeJson("./users1.json",urlList);
   }
 }
 
@@ -210,15 +213,16 @@ await craw(urlList, urlMap)
         * [安装并运行 Elasticsearch](https://www.elastic.co/guide/cn/elasticsearch/guide/current/running-elasticsearch.html)
         * 寫程式碼
         * 執行方式: deno rum -A code2.js
+      * json檔案[users1.json]()
 ## 作品參考來源:code參考網路上資料老師的gitlab上程式碼
 **作品中所參考的資料，及我對其理解及改篇的程度。**
 * 1.資料參考[使用 Node.js 來爬蟲吧！](https://b-l-u-e-b-e-r-r-y.github.io/post/PTTCrawler/)
 * 2.對這個編譯器原始碼我可以理解
 ## 作品參考來源:code1參考老師的gitlab上程式碼
 **作品中所參考的資料，及我對其理解及改篇的程度。**
-* [網站設計進階](https://gitlab.com/ccckmit/course/-/wikis/%E9%99%B3%E9%8D%BE%E8%AA%A0/%E6%9B%B8%E7%B1%8D/%E7%B6%B2%E7%AB%99%E8%A8%AD%E8%A8%88/httpCrawler)
+* 1.資料參考[網站設計進階](https://gitlab.com/ccckmit/course/-/wikis/%E9%99%B3%E9%8D%BE%E8%AA%A0/%E6%9B%B8%E7%B1%8D/%E7%B6%B2%E7%AB%99%E8%A8%AD%E8%A8%88/httpCrawler)
 * 2.對這個編譯器原始碼我大部分可以理解
-## 作品參考來源:code1參考老師的gitlab上程式碼
+## 作品參考來源:code2參考老師的gitlab上程式碼
 **作品中所參考的資料，及我對其理解及改篇的程度。**
-* [ws](https://gitlab.com/ccc109/ws/-/tree/master/deno/14-elasticsearch)
+* 1.資料參考[ws](https://gitlab.com/ccc109/ws/-/tree/master/deno/14-elasticsearch)
 * 2.對這個編譯器原始碼我大部分可以理解

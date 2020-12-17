@@ -1,6 +1,6 @@
 import { get, post } from './esearch.js'
-const encoder = new TextEncoder();
-const code2 = encoder.encode("");
+//import { writeJson } from 'https://deno.land/std/fs/mod.ts'
+import { writeJson, writeJsonSync } from 'https://deno.land/x/jsonfile/mod.ts';
 var urlList = [
   // 'http://msn.com', 
   'https://en.wikipedia.org/wiki/Main_Page'
@@ -64,8 +64,9 @@ async function craw(urlList, urlMap) {
     } catch (error) {
       console.log('error=', error)
     }
+
+    writeJson("./users1.json",urlList);
   }
 }
 
 await craw(urlList, urlMap)
-await Deno.writeFile("code2.json", JSON.stringify(url));
