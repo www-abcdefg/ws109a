@@ -212,7 +212,7 @@ await craw(urlList, urlMap)
     * 步驟:
         * [安装并运行 Elasticsearch](https://www.elastic.co/guide/cn/elasticsearch/guide/current/running-elasticsearch.html)
         * 寫程式碼
-        * 執行方式: deno rum -A code2.js
+        * 執行方式: deno ru -A code2.js
       * json檔案[users1.json](https://github.com/www-abcdefg/ws109a/blob/master/%E6%9C%9F%E4%B8%AD/users1.json)
 ## 作品參考來源:code參考網路上資料老師的gitlab上程式碼
 **作品中所參考的資料，及我對其理解及改篇的程度。**
