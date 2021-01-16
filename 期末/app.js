@@ -14,7 +14,7 @@ const router = new Router();
 
 router
   .get('/', (ctx)=>{
-    ctx.response.redirect('/public/searchh.html')
+    ctx.response.redirect('/public/demo/index.html')
   })
   .get('/search', search)
   .get('/public/(.*)', pub)
@@ -49,7 +49,7 @@ async function search(ctx) {
     docs[i]["_source"]["page"]=s.substring(j-150,j+150)
   }
 
-  ctx.render('views/searchResult.ejs', {docs:docs})
+  ctx.render('views/search.ejs', {docs:docs})
 }
 
 async function pub(ctx) {
